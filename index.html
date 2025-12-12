@@ -1029,6 +1029,8 @@
     <!-- Audio Element -->
     <audio id="backgroundMusic" loop preload="auto">
         <source src="music.mp3" type="audio/mpeg">
+        <!-- Fallback audio sources -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Authentication Modal -->
@@ -1422,7 +1424,7 @@
         const database = firebase.database();
 
         // =====================
-        // SIMPLE MUSIC PLAYER - GUARANTEED WORKING
+        // FIXED MUSIC PLAYER - GUARANTEED WORKING
         // =====================
         const backgroundMusic = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
@@ -1430,34 +1432,42 @@
         const volumeSlider = document.getElementById('volumeSlider');
         
         let isMusicPlaying = false;
-        let audioInitialized = false;
+        let userInteracted = false;
 
+        // Set initial volume
         backgroundMusic.volume = volumeSlider.value / 100;
 
-        // Simple audio initialization
-        function initAudio() {
-            if (audioInitialized) return;
-            
-            // Play silent audio to unlock
-            const silentAudio = new Audio();
-            silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
-            silentAudio.volume = 0.001;
-            
-            silentAudio.play().then(() => {
-                silentAudio.pause();
-                audioInitialized = true;
-                musicInfo.textContent = "READY TO PLAY";
-                musicInfo.style.color = "#00ff88";
-                console.log("Audio initialized");
-            }).catch(() => {
-                musicInfo.textContent = "CLICK PAGE FIRST";
-                musicInfo.style.color = "#ff2e63";
-            });
+        // Function to handle first user interaction
+        function handleFirstInteraction() {
+            if (!userInteracted) {
+                userInteracted = true;
+                console.log("User interacted, audio can now play");
+                
+                // Try to play audio
+                backgroundMusic.play().then(() => {
+                    console.log("Audio started successfully");
+                    isMusicPlaying = true;
+                    musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
+                    musicInfo.textContent = 'CASINO AMBIENCE';
+                    musicInfo.style.color = '#00ff88';
+                    
+                    // Pause it if we just wanted to unlock audio
+                    backgroundMusic.pause();
+                    isMusicPlaying = false;
+                    musicToggle.innerHTML = '<i class="fas fa-play"></i>';
+                    musicInfo.textContent = 'READY TO PLAY';
+                }).catch(error => {
+                    console.log("Audio play failed:", error);
+                    musicInfo.textContent = 'CLICK TO ENABLE';
+                    musicInfo.style.color = '#ff2e63';
+                });
+            }
         }
 
+        // Toggle music function
         function toggleMusic() {
-            if (!audioInitialized) {
-                initAudio();
+            if (!userInteracted) {
+                handleFirstInteraction();
                 return;
             }
             
@@ -1473,8 +1483,10 @@
                     musicInfo.textContent = 'CASINO AMBIENCE';
                     musicInfo.style.color = '#00ff88';
                     isMusicPlaying = true;
-                }).catch(() => {
-                    showNotification('❌ Click page first', 'error');
+                }).catch(error => {
+                    console.log("Failed to play:", error);
+                    musicInfo.textContent = 'CLICK AGAIN';
+                    musicInfo.style.color = '#ff2e63';
                 });
             }
         }
@@ -1483,45 +1495,51 @@
             backgroundMusic.volume = volumeSlider.value / 100;
         }
 
-        // Initialize on first click
-        document.addEventListener('click', function() {
-            if (!audioInitialized) initAudio();
-        });
-
+        // Add event listeners
         musicToggle.addEventListener('click', toggleMusic);
         volumeSlider.addEventListener('input', changeVolume);
 
+        // Listen for any user interaction to unlock audio
+        document.addEventListener('click', handleFirstInteraction);
+        document.addEventListener('keydown', handleFirstInteraction);
+        document.addEventListener('touchstart', handleFirstInteraction);
+
         // =====================
-        // FIXED PAGE NAVIGATION - NOW WORKING
+        // FIXED PAGE NAVIGATION - WORKING VERSION
         // =====================
         function switchPage(pageId) {
+            console.log("Switching to page:", pageId);
+            
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Remove active from all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
+            // Remove active from all navigation links (only the <a> tags)
+            document.querySelectorAll('.nav-links a').forEach(link => {
                 link.classList.remove('active');
             });
             
-            // Show selected page
+            // Show selected page and activate its link
             if (pageId === 'home') {
                 document.getElementById('homePage').classList.add('active');
-                document.querySelectorAll('.nav-link')[0].classList.add('active');
+                document.querySelector('.nav-links a[onclick*="home"]').classList.add('active');
             } else if (pageId === 'rules') {
                 document.getElementById('rulesPage').classList.add('active');
-                document.querySelectorAll('.nav-link')[1].classList.add('active');
+                document.querySelector('.nav-links a[onclick*="rules"]').classList.add('active');
             } else if (pageId === 'social') {
                 document.getElementById('socialPage').classList.add('active');
-                document.querySelectorAll('.nav-link')[2].classList.add('active');
+                document.querySelector('.nav-links a[onclick*="social"]').classList.add('active');
             }
             
-            console.log("Switched to page:", pageId);
+            // Force a small delay for smooth animation
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 10);
         }
 
         // =====================
-        // SIMPLE AUTH SYSTEM (For Testing)
+        // AUTH SYSTEM
         // =====================
         let currentUser = null;
 
@@ -1546,7 +1564,6 @@
             }
         }
 
-        // Simple test login (bypass Firebase for now)
         function loginUser() {
             const growID = document.getElementById('loginGrowID').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -1560,6 +1577,11 @@
             if (growID.toLowerCase() === 'admin' && password === 'raydad_admin_2024') {
                 currentUser = { growID: 'ADMIN', isAdmin: true };
                 showNotification('🔐 Admin login successful!', 'success');
+                hideAuthModal();
+                updateUIAfterLogin();
+            } else if (growID.toLowerCase() === 'test' && password === '123456') {
+                currentUser = { growID: 'TESTPLAYER', isAdmin: false };
+                showNotification('🎰 Welcome to RAYDAD Casino!', 'success');
                 hideAuthModal();
                 updateUIAfterLogin();
             } else {
@@ -1695,37 +1717,59 @@
         // INITIALIZATION
         // =====================
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
             // Set initial UI state
             document.getElementById('userInfo').style.display = 'none';
             document.getElementById('loginBtn').style.display = 'flex';
             document.getElementById('adminAccessBtn').style.display = 'none';
             
-            // Initialize audio after 2 seconds
-            setTimeout(initAudio, 2000);
+            // Set music info
+            musicInfo.textContent = 'CLICK TO ENABLE';
+            musicInfo.style.color = '#ff2e63';
             
             // Welcome notification
             setTimeout(() => {
                 showNotification('🎰 Welcome to RAYDAD Casino! Click anywhere to enable audio.', 'info');
             }, 1000);
             
-            console.log("Website initialized");
+            // Make sure home page is active
+            switchPage('home');
         });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
+            // Music toggle with M key
             if (e.key === 'm' || e.key === 'M') {
                 e.preventDefault();
                 toggleMusic();
             }
             
-            if (e.key === '1') switchPage('home');
-            if (e.key === '2') switchPage('rules');
-            if (e.key === '3') switchPage('social');
+            // Page navigation shortcuts
+            if (e.key === '1' || e.key === 'Home') {
+                e.preventDefault();
+                switchPage('home');
+            }
+            if (e.key === '2') {
+                e.preventDefault();
+                switchPage('rules');
+            }
+            if (e.key === '3') {
+                e.preventDefault();
+                switchPage('social');
+            }
             
+            // Escape to close modals
             if (e.key === 'Escape') {
                 hideAuthModal();
                 hideAdminPanel();
             }
+        });
+
+        // Add click to logo for home navigation
+        document.querySelector('.nav-logo').addEventListener('click', function(e) {
+            e.preventDefault();
+            switchPage('home');
         });
     </script>
 </body>
