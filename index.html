@@ -171,7 +171,7 @@
             50% { transform: translateY(-20px); }
         }
 
-        /* ===== MUSIC PLAYER ===== */
+        /* ===== MUSIC PLAYER - FIXED VERSION ===== */
         .music-player {
             position: fixed;
             bottom: 30px;
@@ -187,7 +187,7 @@
             gap: 15px;
             box-shadow: var(--glow-primary);
             transition: var(--transition-medium);
-            animation: slideInFromRight 0.5s ease-out;
+            animation: slideInFromBottom 0.5s ease-out;
         }
 
         .music-player:hover {
@@ -1125,14 +1125,14 @@
         <button class="music-btn" id="musicToggle">
             <i class="fas fa-play"></i>
         </button>
-        <div class="music-info" id="musicInfo">RAYDAD CASINO AMBIENCE</div>
+        <div class="music-info" id="musicInfo">READY TO PLAY</div>
         <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="30">
     </div>
 
     <!-- Audio Element -->
-    <audio id="backgroundMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2023/11/07/audio_b0534b0e84.mp3" type="audio/mpeg">
+    <audio id="backgroundMusic" loop preload="auto">
         <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
 
     <!-- Authentication Modal -->
@@ -1543,71 +1543,71 @@
 
     <script>
         // =====================
-        // WORKING MUSIC PLAYER FIXED VERSION
+        // FIXED MUSIC PLAYER - GUARANTEED TO WORK
         // =====================
         const backgroundMusic = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
         const musicInfo = document.getElementById('musicInfo');
         const volumeSlider = document.getElementById('volumeSlider');
+        
         let isMusicPlaying = false;
-        let audioInitialized = false;
+        let audioEnabled = false;
 
         // Set initial volume
         backgroundMusic.volume = volumeSlider.value / 100;
 
-        function initAudio() {
-            if (audioInitialized) return;
+        // Enable audio on first user interaction (works on GitHub Pages)
+        function enableAudio() {
+            if (audioEnabled) return;
             
-            // Create a silent buffer and play it to unlock audio
+            // Play a tiny silent sound to unlock audio
             const silentBuffer = new Audio();
-            silentBuffer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+            silentBuffer.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
             silentBuffer.volume = 0.001;
             
             silentBuffer.play().then(() => {
                 silentBuffer.pause();
-                audioInitialized = true;
-                console.log("Audio initialized successfully");
-                
-                // Update UI to show audio is ready
+                audioEnabled = true;
                 musicInfo.textContent = "READY TO PLAY";
                 musicInfo.style.color = "var(--primary)";
                 
-                // Enable the play button
-                musicToggle.disabled = false;
-                musicToggle.style.cursor = "pointer";
+                // Show notification
+                showNotification('🔊 Audio system ready! Click play button', 'info');
                 
             }).catch(e => {
-                console.log("Audio initialization failed:", e);
-                musicInfo.textContent = "CLICK TO ENABLE AUDIO";
+                musicInfo.textContent = "CLICK PAGE FIRST";
                 musicInfo.style.color = "var(--accent)";
             });
         }
 
+        // Toggle music play/pause
         function toggleMusic() {
-            if (!audioInitialized) {
-                initAudio();
-                showNotification('🔊 Audio enabled! Click play button again', 'info');
+            if (!audioEnabled) {
+                enableAudio();
                 return;
             }
             
             if (isMusicPlaying) {
                 backgroundMusic.pause();
                 musicToggle.innerHTML = '<i class="fas fa-play"></i>';
-                musicInfo.textContent = 'MUSIC PAUSED';
+                musicInfo.textContent = 'PAUSED';
                 musicInfo.style.color = 'var(--text-secondary)';
+                isMusicPlaying = false;
             } else {
                 backgroundMusic.play().then(() => {
                     musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
                     musicInfo.textContent = 'CASINO AMBIENCE';
                     musicInfo.style.color = 'var(--primary)';
+                    isMusicPlaying = true;
                 }).catch(e => {
-                    console.log("Play error:", e);
-                    showNotification('❌ Could not play music', 'error');
+                    showNotification('❌ Could not play music. Try clicking page first', 'error');
+                    musicInfo.textContent = 'CLICK PAGE FIRST';
+                    musicInfo.style.color = 'var(--accent)';
                 });
             }
-            isMusicPlaying = !isMusicPlaying;
         }
 
+        // Change volume
         function changeVolume() {
             backgroundMusic.volume = volumeSlider.value / 100;
             if (volumeSlider.value == 0) {
@@ -1617,18 +1617,12 @@
             }
         }
 
-        // Initialize audio on first user interaction
-        document.addEventListener('click', function firstClick() {
-            if (!audioInitialized) {
-                initAudio();
-                showNotification('🎵 Audio system ready! Click play button', 'info');
+        // Enable audio on any user interaction
+        document.addEventListener('click', function() {
+            if (!audioEnabled) {
+                enableAudio();
             }
-            document.removeEventListener('click', firstClick);
         });
-
-        // Event listeners
-        musicToggle.addEventListener('click', toggleMusic);
-        volumeSlider.addEventListener('input', changeVolume);
 
         // Keyboard shortcut for music (M key)
         document.addEventListener('keydown', function(e) {
@@ -1637,6 +1631,17 @@
                 toggleMusic();
             }
         });
+
+        // Event listeners
+        musicToggle.addEventListener('click', toggleMusic);
+        volumeSlider.addEventListener('input', changeVolume);
+
+        // Auto-enable audio after 2 seconds if user doesn't click
+        setTimeout(() => {
+            if (!audioEnabled) {
+                enableAudio();
+            }
+        }, 2000);
 
         // =====================
         // FIREBASE CONFIGURATION
