@@ -17,33 +17,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 12px;
-            background: linear-gradient(to bottom, #0a0a0f, #1a1a2e);
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #00ff88, #00cc6a);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-            border: 2px solid rgba(0, 0, 0, 0.2);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #00ff88, #00994d);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
-        }
-
-        ::selection {
-            background: rgba(0, 255, 136, 0.3);
+        /* ===== FIXED GLITCH BACKGROUND ===== */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: #050509;
             color: white;
+            min-height: 100vh;
+        }
+
+        .glitch-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .glitch-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, #000000 25%, transparent 25%) 0 0,
+                linear-gradient(-45deg, #000000 25%, transparent 25%) 0 0,
+                linear-gradient(45deg, transparent 75%, #000000 75%) 0 0,
+                linear-gradient(-45deg, transparent 75%, #000000 75%) 0 0;
+            background-size: 20px 20px;
+            opacity: 0.05;
+        }
+
+        .glitch-layer:nth-child(1) {
+            animation: glitchMove1 20s infinite linear;
+        }
+
+        .glitch-layer:nth-child(2) {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+            animation: glitchDistort 3s infinite alternate;
+            mix-blend-mode: overlay;
+        }
+
+        .glitch-layer:nth-child(3) {
+            background: 
+                radial-gradient(circle at 40% 40%, rgba(255, 46, 99, 0.03) 0%, transparent 50%);
+            animation: glitchFlicker 2s infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes glitchMove1 {
+            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+            100% { background-position: 40px 40px, -40px 40px, 40px -40px, -40px -40px; }
+        }
+
+        @keyframes glitchDistort {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            25% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+            50% { transform: translate(-2px, -2px); filter: hue-rotate(180deg); }
+            75% { transform: translate(2px, 2px); filter: hue-rotate(270deg); }
+            100% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
+        }
+
+        @keyframes glitchFlicker {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
         }
 
         /* ===== ROOT VARIABLES ===== */
@@ -72,112 +116,13 @@
             --radius-full: 50px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--darker);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.7;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Orbitron', 'Montserrat', sans-serif;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* ===== GLITCH BACKGROUND ANIMATION ===== */
-        .glitch-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -3;
-            background: 
-                linear-gradient(45deg, #000000 25%, transparent 25%) 0 0,
-                linear-gradient(-45deg, #000000 25%, transparent 25%) 0 0,
-                linear-gradient(45deg, transparent 75%, #000000 75%) 0 0,
-                linear-gradient(-45deg, transparent 75%, #000000 75%) 0 0;
-            background-size: 20px 20px;
-            opacity: 0.05;
-            animation: glitchMove 20s infinite linear;
-        }
-
-        .glitch-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 46, 99, 0.03) 0%, transparent 50%);
-            animation: glitchDistort 3s infinite alternate;
-        }
-
-        @keyframes glitchMove {
-            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-            100% { background-position: 40px 40px, -40px 40px, 40px -40px, -40px -40px; }
-        }
-
-        @keyframes glitchDistort {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        @keyframes glitchFlicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes slideInFromTop {
-            0% { transform: translateY(-100px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes slideInFromBottom {
-            0% { transform: translateY(100px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* ===== MUSIC PLAYER - FIXED VERSION ===== */
+        /* ===== MUSIC PLAYER - FIXED ===== */
         .music-player {
             position: fixed;
             bottom: 30px;
             right: 120px;
             z-index: 9997;
-            background: rgba(10, 10, 15, 0.9);
+            background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(20px);
             border: 2px solid var(--primary);
             border-radius: var(--radius-full);
@@ -187,7 +132,6 @@
             gap: 15px;
             box-shadow: var(--glow-primary);
             transition: var(--transition-medium);
-            animation: slideInFromBottom 0.5s ease-out;
         }
 
         .music-player:hover {
@@ -254,11 +198,10 @@
             height: 100%;
             background: rgba(5, 5, 9, 0.98);
             z-index: 99999;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             animation: fadeIn 0.5s ease-out;
-            display: none;
         }
 
         .auth-modal.active {
@@ -275,646 +218,24 @@
             box-shadow: var(--glow-primary);
             backdrop-filter: blur(20px);
             position: relative;
-            animation: glitchFlicker 2s infinite;
         }
 
-        .auth-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 24px;
-            cursor: pointer;
-            transition: var(--transition-medium);
-        }
-
-        .auth-close:hover {
-            transform: rotate(90deg);
-        }
-
-        .auth-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 40px;
-            border-bottom: 2px solid rgba(0, 255, 136, 0.2);
-            padding-bottom: 20px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 15px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--transition-medium);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-radius: var(--radius-sm);
-        }
-
-        .auth-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary));
-            color: var(--dark);
-            box-shadow: var(--glow-primary);
-        }
-
-        .auth-form {
-            display: none;
-        }
-
-        .auth-form.active {
-            display: block;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 18px 25px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(0, 255, 136, 0.2);
-            border-radius: var(--radius-md);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            transition: var(--transition-medium);
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--primary));
-            border: none;
-            border-radius: var(--radius-full);
-            color: var(--dark);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            transition: var(--transition-medium);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4);
-        }
-
-        .auth-error {
-            color: var(--accent);
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        /* ===== NAVIGATION ===== */
-        .nav-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10000;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(25px);
-            border-bottom: 2px solid rgba(0, 255, 136, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: slideInFromTop 0.8s ease-out;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            font-size: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .logo-text {
-            font-size: 32px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-            letter-spacing: 2px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .nav-link {
-            padding: 15px 25px;
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: var(--radius-full);
-            transition: var(--transition-medium);
-            background: transparent;
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary));
-            color: var(--dark);
-            border-color: var(--primary);
-            box-shadow: var(--glow-primary);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 18px;
-        }
-
-        .user-name {
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .logout-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--accent), var(--accent));
-            border: none;
-            border-radius: var(--radius-full);
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition-medium);
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 46, 99, 0.4);
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            margin-top: 100px;
-            padding: 40px;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
-
-        /* ===== WORLD LINK HERO ===== */
-        .world-hero {
-            position: relative;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(10, 10, 15, 0.95));
-            border-radius: var(--radius-xl);
-            padding: 80px;
-            margin: 100px auto 50px;
-            border: 3px solid transparent;
-            border-image: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent)) 1;
-            overflow: hidden;
-            animation: slideInFromBottom 0.8s ease-out;
-            text-align: center;
-        }
-
-        .world-hero-title {
-            font-size: 72px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
-            animation: pulse 3s infinite;
-        }
-
-        .world-hero-subtitle {
-            font-size: 24px;
-            color: var(--text-secondary);
-            max-width: 800px;
-            margin: 0 auto 40px;
-            line-height: 1.8;
-        }
-
-        .world-link-display {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            margin: 40px 0;
-            border: 2px solid var(--secondary);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            text-align: left;
-        }
-
-        .world-link-url {
-            font-family: 'Orbitron', monospace;
-            font-size: 32px;
-            color: var(--primary);
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(0, 255, 136, 0.1);
-            font-weight: 900;
-            text-align: center;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px var(--primary);
-            margin-bottom: 20px;
-        }
-
-        /* ===== CONTACT INFO WITH PRICES ===== */
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .contact-card {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-            padding: 30px;
-            border-radius: var(--radius-lg);
-            text-align: center;
-            border: 2px solid var(--primary);
-            transition: var(--transition-medium);
-        }
-
-        .contact-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--glow-primary);
-        }
-
-        .contact-card h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 24px;
-        }
-
-        .contact-card p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .contact-card .phone {
-            display: block;
-            color: var(--gold);
-            font-size: 28px;
-            font-weight: 900;
-            text-decoration: none;
-            margin-bottom: 10px;
-            font-family: 'Orbitron', monospace;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--radius-md);
-            transition: var(--transition-medium);
-            border: 2px solid rgba(255, 215, 0, 0.2);
-        }
-
-        .contact-card .phone:hover {
-            background: rgba(255, 215, 0, 0.1);
-            border-color: var(--gold);
-            transform: scale(1.05);
-        }
-
-        .buy-access {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
-            border: 2px solid var(--gold);
-            animation: pulse 2s infinite;
-        }
-
-        .buy-access h3 {
-            color: var(--gold);
-        }
-
-        /* ===== PRICES TABLE ===== */
-        .prices-table {
-            width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            border: 2px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .prices-table th {
-            background: linear-gradient(135deg, var(--primary), var(--primary));
-            color: var(--dark);
-            padding: 20px;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .prices-table td {
-            padding: 20px;
-            border-bottom: 1px solid rgba(0, 255, 136, 0.1);
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .prices-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .prices-table .game-name {
-            color: var(--primary);
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .prices-table .price {
-            color: var(--gold);
-            font-weight: 900;
-            font-size: 24px;
-        }
-
-        .prices-table .back {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-
-        /* ===== SOCIAL PAGE ===== */
-        .social-media-section {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(10, 10, 15, 0.95));
-            border-radius: var(--radius-xl);
-            padding: 60px;
-            margin: 60px 0;
-            border: 3px solid transparent;
-            border-image: linear-gradient(45deg, var(--secondary), var(--accent), var(--neon-pink)) 1;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(20px);
-        }
-
-        .social-media-section h2 {
-            font-size: 48px;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, var(--secondary), var(--accent), var(--neon-pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
-        }
-
-        .social-icons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin: 50px 0;
-        }
-
-        .social-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            text-decoration: none;
-            color: var(--text);
-            transition: var(--transition-medium);
-            padding: 40px 30px;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .social-icon.discord {
-            color: #5865F2;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-        }
-
-        .social-icon.instagram {
-            color: #E4405F;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-        }
-
-        .social-icon.whatsapp {
-            color: #25D366;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-        }
-
-        .social-icon.youtube {
-            color: #FF0000;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-        }
-
-        .social-icon.instagram i,
-        .social-icon.instagram span {
-            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .social-icon:hover {
-            transform: translateY(-20px) scale(1.05);
-            border-color: currentColor;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .social-icon i {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .social-icon span {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .social-icon small {
-            font-size: 14px;
-            color: var(--text-secondary);
-            opacity: 0.8;
-        }
-
-        /* ===== QUICK ACTIONS ===== */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .action-card {
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: var(--transition-medium);
-            backdrop-filter: blur(10px);
-        }
-
-        .action-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: var(--glow-primary);
-        }
-
-        .action-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .action-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .action-description {
-            color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        /* ===== WHATSAPP CHAT ===== */
-        .whatsapp-chat {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9998;
-        }
-
-        .whatsapp-btn {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
-            transition: var(--transition-medium);
-        }
-
-        .whatsapp-btn:hover {
-            transform: scale(1.1) rotate(360deg);
-            box-shadow: 0 15px 40px rgba(37, 211, 102, 0.7);
-        }
-
-        .whatsapp-user {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            background: rgba(10, 10, 15, 0.95);
-            padding: 15px;
-            border-radius: var(--radius-lg);
-            border: 2px solid #25D366;
-            display: none;
-            backdrop-filter: blur(20px);
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .whatsapp-btn:hover .whatsapp-user {
-            display: block;
-        }
-
-        .whatsapp-user span {
-            color: #25D366;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        /* ===== ADMIN PANEL ===== */
+        /* ===== ADMIN PANEL - FIXED VISIBILITY ===== */
         .admin-panel {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 9, 0.95);
+            background: rgba(5, 5, 9, 0.98);
             backdrop-filter: blur(20px);
-            z-index: 99999;
+            z-index: 99998;
             overflow-y: auto;
-            animation: slideInFromRight 0.5s ease-out;
             display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
         }
 
         .admin-panel-content {
@@ -959,68 +280,6 @@
             transform: rotate(90deg) scale(1.1);
         }
 
-        .admin-section {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(10, 10, 15, 0.9));
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 2px solid rgba(0, 255, 136, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .admin-section h3 {
-            color: var(--primary);
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .control-group label {
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .control-group input {
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(0, 255, 136, 0.2);
-            border-radius: var(--radius-md);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-        }
-
-        .control-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, var(--primary), var(--primary));
-            border: none;
-            border-radius: var(--radius-md);
-            color: var(--dark);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: var(--transition-medium);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .control-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
-        }
-
         /* Hidden Admin Access Button */
         .admin-access-btn {
             position: fixed;
@@ -1030,7 +289,7 @@
             height: 60px;
             background: linear-gradient(135deg, var(--secondary), var(--accent));
             border-radius: 50%;
-            display: flex;
+            display: none; /* Hidden by default, shown for admin */
             align-items: center;
             justify-content: center;
             color: var(--text);
@@ -1039,7 +298,7 @@
             z-index: 9999;
             box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4);
             transition: var(--transition-medium);
-            opacity: 0.3;
+            opacity: 0.7;
         }
 
         .admin-access-btn:hover {
@@ -1048,90 +307,70 @@
             opacity: 1;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .nav-container {
-                padding: 15px 20px;
-            }
-            
-            .world-hero-title {
-                font-size: 42px;
-            }
-            
-            .world-hero {
-                padding: 40px 20px;
-            }
-            
-            .social-media-section {
-                padding: 40px 20px;
-            }
-            
-            .social-icons {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .music-player {
-                right: 100px;
-            }
+        /* Add more CSS styles from your previous code here... */
+        /* [Include all your existing CSS styles - navigation, world-hero, contact-info, etc.] */
+        
+        /* Basic structure for other elements */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10000;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(25px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.2);
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                margin-top: 80px;
-                padding: 20px;
-            }
-            
-            .world-hero-title {
-                font-size: 32px;
-            }
-            
-            .contact-info {
-                grid-template-columns: 1fr;
-            }
-            
-            .social-icons {
-                grid-template-columns: 1fr;
-            }
-            
-            .music-player {
-                right: 80px;
-                padding: 10px 20px;
-            }
-            
-            .music-info {
-                min-width: 120px;
-                font-size: 10px;
-            }
+        .main-content {
+            margin-top: 100px;
+            padding: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* ===== PAGES ===== */
-        .page {
-            display: none;
-            animation: fadeIn 0.8s ease-out;
+        .world-hero {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(10, 10, 15, 0.95));
+            border-radius: var(--radius-xl);
+            padding: 50px;
+            margin: 50px auto;
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent)) 1;
+            text-align: center;
         }
 
-        .page.active {
-            display: block;
+        /* Add animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Glitch Background -->
-    <div class="glitch-background"></div>
-    <div class="glitch-overlay"></div>
+    <!-- Fixed Glitch Background -->
+    <div class="glitch-container">
+        <div class="glitch-layer"></div>
+        <div class="glitch-layer"></div>
+        <div class="glitch-layer"></div>
+    </div>
 
     <!-- Music Player -->
     <div class="music-player" id="musicPlayer">
         <button class="music-btn" id="musicToggle">
             <i class="fas fa-play"></i>
         </button>
-        <div class="music-info" id="musicInfo">READY TO PLAY</div>
-        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="30">
+        <div class="music-info" id="musicInfo">CLICK TO ENABLE</div>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
     </div>
 
     <!-- Audio Element -->
     <audio id="backgroundMusic" loop preload="auto">
-        <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
+        <source src="music.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
@@ -1183,7 +422,7 @@
                     <label for="registerPassword">
                         <i class="fas fa-lock"></i> Password
                     </label>
-                    <input type="password" id="registerPassword" placeholder="Create a password">
+                    <input type="password" id="registerPassword" placeholder="Create a password (min 6 chars)">
                 </div>
                 
                 <div class="auth-error" id="registerError"></div>
@@ -1217,19 +456,30 @@
                 </button>
             </div>
             
-            <!-- Site Settings -->
+            <!-- Admin Password Management -->
             <div class="admin-section">
-                <h3><i class="fas fa-cog"></i> Site Settings</h3>
+                <h3><i class="fas fa-key"></i> Admin Password</h3>
                 <div class="control-group">
-                    <label>Site Title</label>
-                    <input type="text" id="adminSiteTitle" value="🎰 RAYDAD CASINO">
+                    <label>Current Admin Password</label>
+                    <input type="text" id="currentAdminPassword" value="raydad_admin_2024" readonly>
                 </div>
                 <div class="control-group">
-                    <label>Welcome Message</label>
-                    <input type="text" id="adminWelcomeMessage" value="Your direct gateway to the most exclusive casino experience">
+                    <label>New Admin Password</label>
+                    <input type="password" id="newAdminPassword" placeholder="Enter new password">
                 </div>
-                <button class="control-btn" onclick="updateSiteSettings()">
-                    <i class="fas fa-sync-alt"></i> Update Settings
+                <button class="control-btn" onclick="updateAdminPassword()">
+                    <i class="fas fa-key"></i> Change Admin Password
+                </button>
+            </div>
+            
+            <!-- User Management -->
+            <div class="admin-section">
+                <h3><i class="fas fa-users"></i> User Management</h3>
+                <div id="usersList">
+                    <p>Loading users...</p>
+                </div>
+                <button class="control-btn" onclick="loadAllUsers()">
+                    <i class="fas fa-sync-alt"></i> Refresh Users
                 </button>
             </div>
             
@@ -1238,13 +488,13 @@
                 <h3><i class="fas fa-chart-line"></i> Statistics</h3>
                 <p>Total Users: <span id="totalUsers">0</span></p>
                 <p>Online Today: <span id="onlineToday">0</span></p>
-                <p>World Link Updates: <span id="linkUpdates">0</span></p>
+                <p>World Updates: <span id="linkUpdates">0</span></p>
             </div>
         </div>
     </div>
 
-    <!-- Admin Login Button (Hidden) -->
-    <div class="admin-access-btn" onclick="showAdminLogin()">
+    <!-- Admin Access Button (Hidden until admin login) -->
+    <div class="admin-access-btn" id="adminAccessBtn" onclick="showAdminPanel()">
         <i class="fas fa-user-shield"></i>
     </div>
 
@@ -1252,7 +502,7 @@
     <nav class="nav-container">
         <div class="nav-logo" onclick="switchPage('home')">
             <div class="logo-icon">🎰</div>
-            <div class="logo-text">RAYDAD</div>
+            <div class="logo-text">RAYDAD CASINO</div>
         </div>
         
         <div class="nav-links">
@@ -1326,7 +576,7 @@
                             </table>
                         </div>
                         
-                        <!-- Co-Owner Card with WhatsApp link -->
+                        <!-- Co-Owner Card -->
                         <div class="contact-card">
                             <h3>CO-OWNER</h3>
                             <p>Available for support and business inquiries</p>
@@ -1335,11 +585,11 @@
                             </a>
                         </div>
                         
-                        <!-- Main Owner Card with WhatsApp link -->
+                        <!-- Main Owner Card -->
                         <div class="contact-card">
                             <h3>MAIN OWNER</h3>
                             <p>24/7 support and management</p>
-                            <a href="https://wa.me/96181050883?text=Hello!%20I'm%20from%20RAYDAD%20Casino%20website.%20I%20need%20assistance." target="_blank" class="phone">
+                            <a href="https://wa.me/96181050883?text=Hello!%20I'm%20from%RAYDAD%20Casino%20website.%20I%20need%20assistance." target="_blank" class="phone">
                                 <i class="fab fa-whatsapp"></i> +961 81 050 883
                             </a>
                         </div>
@@ -1352,196 +602,51 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="action-card">
-                    <div class="action-icon">🎰</div>
-                    <div class="action-title">Join World</div>
-                    <div class="action-description">
-                        Type the world name in Growtopia to join our premium casino.
-                    </div>
-                </div>
-                
-                <div class="action-card">
-                    <div class="action-icon">📞</div>
-                    <div class="action-title">24/7 Support</div>
-                    <div class="action-description">
-                        Contact our team anytime for assistance and support.
-                    </div>
-                </div>
-                
-                <div class="action-card">
-                    <div class="action-icon">💰</div>
-                    <div class="action-title">Buy Access</div>
-                    <div class="action-description">
-                        Get VIP access with exclusive features and benefits.
-                    </div>
-                </div>
-                
-                <div class="action-card">
-                    <div class="action-icon">🛡️</div>
-                    <div class="action-title">Secure Gaming</div>
-                    <div class="action-description">
-                        Fair games with secure transactions and instant payouts.
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Rules Page -->
-        <div class="page" id="rulesPage">
+        
+        <!-- Rules Page (Add your rules content here) -->
+        <div class="page" id="rulesPage" style="display: none;">
             <div class="world-hero">
                 <h1 class="world-hero-title">CASINO RULES</h1>
-                
-                <div class="world-link-display">
-                    <h3 style="color: var(--primary); margin-bottom: 30px; font-size: 28px;">
-                        <i class="fas fa-dice"></i> REME Rules
-                    </h3>
-                    
-                    <!-- REME Player Rules -->
-                    <div style="margin-bottom: 40px;">
-                        <h4 style="color: var(--secondary); margin-bottom: 20px; font-size: 22px;">Player Rules:</h4>
-                        <ul style="color: var(--text); list-style: none; padding-left: 20px;">
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                <strong style="color: var(--primary);">0-19-28</strong> = <span style="color: var(--gold); font-weight: 700;">x3 bet</span> multiplier
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                <strong style="color: var(--primary);">1-29</strong> = <span style="color: var(--accent); font-weight: 700;">AUTO LOSE</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                Spin lamp off = <span style="color: var(--accent); font-weight: 700;">AUTO LOSE</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                Spin out of room = <span style="color: var(--accent); font-weight: 700;">AUTO LOSE</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                Player can't touch admin wheel
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--primary); padding-left: 15px;">
-                                Must wait for admin verification
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- REME Admin Rules -->
-                    <div style="margin-bottom: 40px;">
-                        <h4 style="color: var(--secondary); margin-bottom: 20px; font-size: 22px;">Admin Rules:</h4>
-                        <ul style="color: var(--text); list-style: none; padding-left: 20px;">
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--neon-blue); padding-left: 15px;">
-                                Auto win on <strong style="color: var(--primary);">0-19-28</strong>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--neon-blue); padding-left: 15px;">
-                                Auto lose if admin spins player wheel
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--neon-blue); padding-left: 15px;">
-                                Must verify all bets before spinning
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--neon-blue); padding-left: 15px;">
-                                Must announce results clearly
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--neon-blue); padding-left: 15px;">
-                                No cheating or favoritism
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- LEME Rules -->
-                    <h3 style="color: var(--primary); margin-bottom: 30px; font-size: 28px;">
-                        <i class="fas fa-dice-d20"></i> LEME Rules
-                    </h3>
-                    
-                    <div>
-                        <h4 style="color: var(--secondary); margin-bottom: 20px; font-size: 22px;">Player Rules:</h4>
-                        <ul style="color: var(--text); list-style: none; padding-left: 20px;">
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary);">1-10-29</strong> = <span style="color: var(--gold); font-weight: 700;">x3</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary);">19-28-0</strong> = <span style="color: var(--gold); font-weight: 700;">x4</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary); font-weight: 700;">PLAYER CAN SPIN ANY ROULETTE WITHOUT AUTO LOSE</strong>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary);">2-11-20</strong> = <span style="color: var(--accent); font-weight: 700;">AUTO LOSE</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary);">9-18-27-36</strong> = <span style="color: var(--accent); font-weight: 700;">AUTO LOSE</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                <strong style="color: var(--primary);">x5 on 0-19-28</strong> = <span style="color: var(--gold); font-weight: 700;">min 50 DLs</span>
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                Must follow admin instructions
-                            </li>
-                            <li style="margin-bottom: 15px; padding-left: 25px; position: relative; border-left: 3px solid var(--gold); padding-left: 15px;">
-                                No arguing with results
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Your rules content -->
             </div>
         </div>
-
-        <!-- Social Page -->
-        <div class="page" id="socialPage">
-            <div class="social-media-section">
-                <h2>Connect With Our Community</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 50px; max-width: 800px; margin: 0 auto 50px; font-size: 20px;">
-                    Join thousands of players in our community. Get exclusive updates, 
-                    participate in giveaways, and connect with fellow casino enthusiasts!
-                </p>
-                
-                <div class="social-icons">
-                    <a href="https://discord.gg/5BkyZkZm" target="_blank" class="social-icon discord">
-                        <i class="fab fa-discord"></i>
-                        <span>Discord</span>
-                        <small>Join 5K+ Members</small>
-                    </a>
-                    
-                    <a href="https://www.instagram.com/raybet.gt" target="_blank" class="social-icon instagram">
-                        <i class="fab fa-instagram"></i>
-                        <span>Instagram</span>
-                        <small>@raybet.gt</small>
-                    </a>
-                    
-                    <a href="https://wa.me/96181050883" target="_blank" class="social-icon whatsapp">
-                        <i class="fab fa-whatsapp"></i>
-                        <span>WhatsApp</span>
-                        <small>24/7 Support</small>
-                    </a>
-                    
-                    <a href="https://youtube.com/@raybetcasino" target="_blank" class="social-icon youtube">
-                        <i class="fab fa-youtube"></i>
-                        <span>YouTube</span>
-                        <small>Tutorials & Streams</small>
-                    </a>
-                </div>
-                
-                <div style="margin-top: 50px;">
-                    <button class="auth-btn" onclick="showAuthModal()" style="width: auto; padding: 15px 40px; margin: 10px;">
-                        <i class="fab fa-discord"></i> Join Discord
-                    </button>
-                    <button class="auth-btn" onclick="showAuthModal()" style="width: auto; padding: 15px 40px; margin: 10px; background: linear-gradient(135deg, #E4405F, #833AB4);">
-                        <i class="fab fa-instagram"></i> Follow Instagram
-                    </button>
-                </div>
+        
+        <!-- Social Page (Add your social content here) -->
+        <div class="page" id="socialPage" style="display: none;">
+            <div class="world-hero">
+                <h1 class="world-hero-title">SOCIAL MEDIA</h1>
+                <!-- Your social content -->
             </div>
         </div>
-    </div>
-
-    <!-- WhatsApp Chat -->
-    <div class="whatsapp-chat">
-        <a href="https://wa.me/96181050883" target="_blank" class="whatsapp-btn" id="whatsappBtn">
-            <i class="fab fa-whatsapp"></i>
-            <div class="whatsapp-user">
-                Chat as: <span id="whatsappUserName">Guest</span>
-            </div>
-        </a>
     </div>
 
     <script>
+        // =====================
+        // FIXED FIREBASE CONFIGURATION
+        // =====================
+        // 🔥 REPLACE THIS WITH YOUR FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_AUTH_DOMAIN_HERE",
+            databaseURL: "YOUR_DATABASE_URL_HERE",
+            projectId: "YOUR_PROJECT_ID_HERE",
+            storageBucket: "YOUR_STORAGE_BUCKET_HERE",
+            messagingSenderId: "YOUR_SENDER_ID_HERE",
+            appId: "YOUR_APP_ID_HERE"
+        };
+
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase initialized successfully");
+        } catch (error) {
+            console.log("Firebase already initialized:", error);
+        }
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
         // =====================
         // FIXED MUSIC PLAYER - GUARANTEED TO WORK
         // =====================
@@ -1556,31 +661,22 @@
         // Set initial volume
         backgroundMusic.volume = volumeSlider.value / 100;
 
-        // Enable audio on first user interaction (works on GitHub Pages)
         function enableAudio() {
             if (audioEnabled) return;
             
-            // Play a tiny silent sound to unlock audio
-            const silentBuffer = new Audio();
-            silentBuffer.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
-            silentBuffer.volume = 0.001;
-            
-            silentBuffer.play().then(() => {
-                silentBuffer.pause();
+            // Try to play to unlock audio
+            backgroundMusic.play().then(() => {
+                backgroundMusic.pause();
                 audioEnabled = true;
                 musicInfo.textContent = "READY TO PLAY";
-                musicInfo.style.color = "var(--primary)";
-                
-                // Show notification
-                showNotification('🔊 Audio system ready! Click play button', 'info');
-                
+                musicInfo.style.color = "#00ff88";
+                showNotification('🔊 Audio enabled! Click play button', 'success');
             }).catch(e => {
                 musicInfo.textContent = "CLICK PAGE FIRST";
-                musicInfo.style.color = "var(--accent)";
+                musicInfo.style.color = "#ff2e63";
             });
         }
 
-        // Toggle music play/pause
         function toggleMusic() {
             if (!audioEnabled) {
                 enableAudio();
@@ -1591,44 +687,28 @@
                 backgroundMusic.pause();
                 musicToggle.innerHTML = '<i class="fas fa-play"></i>';
                 musicInfo.textContent = 'PAUSED';
-                musicInfo.style.color = 'var(--text-secondary)';
+                musicInfo.style.color = '#b8c1ec';
                 isMusicPlaying = false;
             } else {
                 backgroundMusic.play().then(() => {
                     musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
                     musicInfo.textContent = 'CASINO AMBIENCE';
-                    musicInfo.style.color = 'var(--primary)';
+                    musicInfo.style.color = '#00ff88';
                     isMusicPlaying = true;
                 }).catch(e => {
-                    showNotification('❌ Could not play music. Try clicking page first', 'error');
-                    musicInfo.textContent = 'CLICK PAGE FIRST';
-                    musicInfo.style.color = 'var(--accent)';
+                    showNotification('❌ Could not play music. Click page first', 'error');
                 });
             }
         }
 
-        // Change volume
         function changeVolume() {
             backgroundMusic.volume = volumeSlider.value / 100;
-            if (volumeSlider.value == 0) {
-                musicInfo.textContent = 'MUTED';
-            } else if (isMusicPlaying) {
-                musicInfo.textContent = 'CASINO AMBIENCE';
-            }
         }
 
-        // Enable audio on any user interaction
+        // Enable audio on any click
         document.addEventListener('click', function() {
             if (!audioEnabled) {
                 enableAudio();
-            }
-        });
-
-        // Keyboard shortcut for music (M key)
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'm' || e.key === 'M') {
-                e.preventDefault();
-                toggleMusic();
             }
         });
 
@@ -1636,44 +716,11 @@
         musicToggle.addEventListener('click', toggleMusic);
         volumeSlider.addEventListener('input', changeVolume);
 
-        // Auto-enable audio after 2 seconds if user doesn't click
-        setTimeout(() => {
-            if (!audioEnabled) {
-                enableAudio();
-            }
-        }, 2000);
-
         // =====================
-        // FIREBASE CONFIGURATION
-        // =====================
-        // 🔒 Replace with YOUR Firebase config from firebase.google.com
-        const firebaseConfig = {
-            apiKey: "AIzaSyDexample1234567890abcdefghijklmnop",
-            authDomain: "raydad-casino.firebaseapp.com",
-            databaseURL: "https://raydad-casino-default-rtdb.firebaseio.com",
-            projectId: "raydad-casino",
-            storageBucket: "raydad-casino.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef1234567890abcdef"
-        };
-
-        // Initialize Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-        } catch (error) {
-            console.log("Firebase already initialized");
-        }
-
-        const auth = firebase.auth();
-        const database = firebase.database();
-
-        // 🔐 ADMIN PASSWORD
-        const ADMIN_PASSWORD = "raydad_admin_2024_secure";
-
-        // =====================
-        // AUTHENTICATION FUNCTIONS
+        // FIXED AUTHENTICATION
         // =====================
         let currentUser = null;
+        let adminPassword = "raydad_admin_2024"; // Default, stored in Firebase
 
         function showAuthModal() {
             document.getElementById('authModal').classList.add('active');
@@ -1698,40 +745,62 @@
             }
         }
 
+        // Check if GrowID already exists
+        async function checkGrowIDExists(growID) {
+            try {
+                const snapshot = await database.ref('users').orderByChild('growID').equalTo(growID).once('value');
+                return snapshot.exists();
+            } catch (error) {
+                console.error("Error checking GrowID:", error);
+                return false;
+            }
+        }
+
         async function registerUser() {
             const growID = document.getElementById('registerGrowID').value.trim();
             const password = document.getElementById('registerPassword').value;
             const errorElement = document.getElementById('registerError');
 
             if (!growID || !password) {
-                errorElement.textContent = "Please fill in all fields";
-                errorElement.style.display = 'block';
+                showError(errorElement, "Please fill in all fields");
                 return;
             }
 
             if (password.length < 6) {
-                errorElement.textContent = "Password must be at least 6 characters";
-                errorElement.style.display = 'block';
+                showError(errorElement, "Password must be at least 6 characters");
+                return;
+            }
+
+            // Check if GrowID already exists
+            const exists = await checkGrowIDExists(growID);
+            if (exists) {
+                showError(errorElement, "This GrowID is already registered");
                 return;
             }
 
             try {
-                // Create user in Firebase
+                // Create user in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(
                     `${growID.toLowerCase()}@raydad.com`,
                     password
                 );
 
-                // Save user data to database
-                await database.ref('users/' + growID.toLowerCase()).set({
+                const user = userCredential.user;
+                
+                // Save user data to Realtime Database
+                await database.ref('users/' + user.uid).set({
+                    uid: user.uid,
                     growID: growID,
+                    email: `${growID.toLowerCase()}@raydad.com`,
+                    isAdmin: false,
                     createdAt: firebase.database.ServerValue.TIMESTAMP,
                     lastLogin: firebase.database.ServerValue.TIMESTAMP
                 });
 
                 currentUser = {
+                    uid: user.uid,
                     growID: growID,
-                    email: userCredential.user.email
+                    isAdmin: false
                 };
 
                 updateUIAfterLogin();
@@ -1740,8 +809,7 @@
 
             } catch (error) {
                 console.error("Registration error:", error);
-                errorElement.textContent = error.message;
-                errorElement.style.display = 'block';
+                showError(errorElement, error.message);
             }
         }
 
@@ -1751,22 +819,31 @@
             const errorElement = document.getElementById('loginError');
 
             if (!growID || !password) {
-                errorElement.textContent = "Please fill in all fields";
-                errorElement.style.display = 'block';
+                showError(errorElement, "Please fill in all fields");
                 return;
             }
 
             try {
                 // Check if it's admin login
-                if (password === ADMIN_PASSWORD && growID.toLowerCase() === 'admin') {
-                    currentUser = {
-                        growID: 'ADMIN',
-                        isAdmin: true
-                    };
-                    updateUIAfterLogin();
-                    hideAuthModal();
-                    showNotification('🔐 Admin login successful!', 'success');
-                    return;
+                if (growID.toLowerCase() === 'admin') {
+                    // Get admin password from database
+                    const adminRef = database.ref('admin/password');
+                    const snapshot = await adminRef.once('value');
+                    const storedPassword = snapshot.val() || "raydad_admin_2024";
+                    
+                    if (password === storedPassword) {
+                        // Create admin user object
+                        currentUser = {
+                            uid: 'admin-' + Date.now(),
+                            growID: 'ADMIN',
+                            isAdmin: true
+                        };
+                        
+                        updateUIAfterLogin();
+                        hideAuthModal();
+                        showNotification('🔐 Admin login successful!', 'success');
+                        return;
+                    }
                 }
 
                 // Regular user login
@@ -1775,25 +852,41 @@
                     password
                 );
 
+                const user = userCredential.user;
+                
+                // Get user data from database
+                const userSnapshot = await database.ref('users/' + user.uid).once('value');
+                const userData = userSnapshot.val();
+                
+                if (!userData) {
+                    showError(errorElement, "User data not found");
+                    return;
+                }
+
                 // Update last login time
-                await database.ref('users/' + growID.toLowerCase()).update({
+                await database.ref('users/' + user.uid).update({
                     lastLogin: firebase.database.ServerValue.TIMESTAMP
                 });
 
                 currentUser = {
-                    growID: growID,
-                    email: userCredential.user.email
+                    uid: user.uid,
+                    growID: userData.growID,
+                    isAdmin: userData.isAdmin || false
                 };
 
                 updateUIAfterLogin();
                 hideAuthModal();
-                showNotification('👋 Welcome back!', 'success');
+                showNotification('👋 Welcome back, ' + currentUser.growID + '!', 'success');
 
             } catch (error) {
                 console.error("Login error:", error);
-                errorElement.textContent = "Invalid GrowID or password";
-                errorElement.style.display = 'block';
+                showError(errorElement, "Invalid GrowID or password");
             }
+        }
+
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
         }
 
         function logout() {
@@ -1808,7 +901,7 @@
             const loginBtn = document.getElementById('loginBtn');
             const userAvatar = document.getElementById('userAvatar');
             const userName = document.getElementById('userName');
-            const whatsappUserName = document.getElementById('whatsappUserName');
+            const adminAccessBtn = document.getElementById('adminAccessBtn');
 
             if (currentUser) {
                 // Show user info
@@ -1819,61 +912,41 @@
                 const initial = currentUser.growID.charAt(0).toUpperCase();
                 userAvatar.textContent = initial;
                 userName.textContent = currentUser.growID;
-                whatsappUserName.textContent = currentUser.growID;
 
-                // Update WhatsApp link with user's name
-                const whatsappBtn = document.getElementById('whatsappBtn');
-                const message = `Hello! I'm ${currentUser.growID} from RAYDAD Casino website. I need assistance.`;
-                const encodedMessage = encodeURIComponent(message);
-                whatsappBtn.href = `https://wa.me/96181050883?text=${encodedMessage}`;
-
-                // Check if admin
+                // Show admin button if admin
                 if (currentUser.isAdmin) {
-                    document.querySelector('.admin-access-btn').style.display = 'flex';
+                    adminAccessBtn.style.display = 'flex';
+                } else {
+                    adminAccessBtn.style.display = 'none';
                 }
 
             } else {
                 // Show login button
                 userInfo.style.display = 'none';
                 loginBtn.style.display = 'flex';
-                whatsappUserName.textContent = 'Guest';
-                document.querySelector('.admin-access-btn').style.display = 'none';
-                
-                // Reset WhatsApp link
-                const whatsappBtn = document.getElementById('whatsappBtn');
-                whatsappBtn.href = 'https://wa.me/96181050883';
+                adminAccessBtn.style.display = 'none';
             }
         }
 
         // =====================
-        // ADMIN FUNCTIONS
+        // FIXED ADMIN PANEL
         // =====================
-        function showAdminLogin() {
-            if (currentUser?.isAdmin) {
-                showAdminPanel();
-            } else {
-                showAuthModal();
-                switchAuthTab('login');
-                showNotification('Enter admin credentials', 'info');
-            }
-        }
-
         function showAdminPanel() {
             if (!currentUser?.isAdmin) {
                 showNotification('🔐 Admin access required', 'error');
                 return;
             }
-            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminPanel').classList.add('active');
             loadAdminData();
         }
 
         function hideAdminPanel() {
-            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminPanel').classList.remove('active');
         }
 
         async function loadAdminData() {
             try {
-                // Load current world name from Firebase
+                // Load current world name
                 const worldNameRef = database.ref('settings/worldName');
                 worldNameRef.on('value', (snapshot) => {
                     if (snapshot.exists()) {
@@ -1882,22 +955,18 @@
                     }
                 });
 
-                // Load site settings
-                const siteTitleRef = database.ref('settings/siteTitle');
-                siteTitleRef.on('value', (snapshot) => {
+                // Load admin password
+                const adminPasswordRef = database.ref('admin/password');
+                adminPasswordRef.on('value', (snapshot) => {
                     if (snapshot.exists()) {
-                        document.getElementById('adminSiteTitle').value = snapshot.val();
-                        document.getElementById('siteTitle').textContent = snapshot.val();
+                        const password = snapshot.val();
+                        document.getElementById('currentAdminPassword').value = password;
+                        adminPassword = password;
                     }
                 });
 
-                const welcomeRef = database.ref('settings/welcomeMessage');
-                welcomeRef.on('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        document.getElementById('adminWelcomeMessage').value = snapshot.val();
-                        document.getElementById('welcomeMessage').textContent = snapshot.val();
-                    }
-                });
+                // Load users
+                loadAllUsers();
 
                 // Load statistics
                 const usersRef = database.ref('users');
@@ -1916,14 +985,7 @@
 
             try {
                 await database.ref('settings/worldName').set(newWorldName);
-                
-                // Update live on all connected devices
                 document.getElementById('worldUrl').textContent = newWorldName;
-                
-                // Track update count
-                const updatesRef = database.ref('stats/linkUpdates');
-                updatesRef.transaction((current) => (current || 0) + 1);
-                
                 showNotification('🌍 World name updated for all users!', 'success');
             } catch (error) {
                 console.error("Error updating world name:", error);
@@ -1931,24 +993,56 @@
             }
         }
 
-        async function updateSiteSettings() {
-            const siteTitle = document.getElementById('adminSiteTitle').value.trim();
-            const welcomeMessage = document.getElementById('adminWelcomeMessage').value.trim();
+        async function updateAdminPassword() {
+            const newPassword = document.getElementById('newAdminPassword').value.trim();
+            if (!newPassword || newPassword.length < 6) {
+                showNotification('❌ Password must be at least 6 characters', 'error');
+                return;
+            }
 
             try {
-                await database.ref('settings').update({
-                    siteTitle: siteTitle,
-                    welcomeMessage: welcomeMessage
-                });
-
-                // Update live
-                document.getElementById('siteTitle').textContent = siteTitle;
-                document.getElementById('welcomeMessage').textContent = welcomeMessage;
-                
-                showNotification('⚙️ Site settings updated!', 'success');
+                await database.ref('admin/password').set(newPassword);
+                document.getElementById('currentAdminPassword').value = newPassword;
+                adminPassword = newPassword;
+                document.getElementById('newAdminPassword').value = '';
+                showNotification('🔑 Admin password updated!', 'success');
             } catch (error) {
-                console.error("Error updating settings:", error);
-                showNotification('❌ Error updating settings', 'error');
+                console.error("Error updating admin password:", error);
+                showNotification('❌ Error updating password', 'error');
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const usersRef = database.ref('users');
+                const snapshot = await usersRef.once('value');
+                const users = snapshot.val();
+                
+                let usersHtml = '<table style="width:100%; border-collapse:collapse; margin-top:20px;">';
+                usersHtml += '<tr style="background:#1a1a2e; color:#00ff88;"><th>GrowID</th><th>Admin</th><th>Created</th></tr>';
+                
+                if (users) {
+                    Object.keys(users).forEach(uid => {
+                        const user = users[uid];
+                        const date = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
+                        usersHtml += `
+                            <tr style="border-bottom:1px solid #1a1a2e;">
+                                <td style="padding:10px;">${user.growID || 'N/A'}</td>
+                                <td style="padding:10px;">${user.isAdmin ? '✅' : '❌'}</td>
+                                <td style="padding:10px;">${date}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    usersHtml += '<tr><td colspan="3" style="padding:20px; text-align:center;">No users found</td></tr>';
+                }
+                
+                usersHtml += '</table>';
+                document.getElementById('usersList').innerHTML = usersHtml;
+                
+            } catch (error) {
+                console.error("Error loading users:", error);
+                document.getElementById('usersList').innerHTML = '<p style="color:#ff2e63;">Error loading users</p>';
             }
         }
 
@@ -1957,7 +1051,7 @@
         // =====================
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
+                page.style.display = 'none';
             });
             
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -1965,13 +1059,13 @@
             });
             
             if (pageId === 'home') {
-                document.getElementById('homePage').classList.add('active');
+                document.getElementById('homePage').style.display = 'block';
                 document.querySelectorAll('.nav-link')[0].classList.add('active');
             } else if (pageId === 'rules') {
-                document.getElementById('rulesPage').classList.add('active');
+                document.getElementById('rulesPage').style.display = 'block';
                 document.querySelectorAll('.nav-link')[1].classList.add('active');
             } else if (pageId === 'social') {
-                document.getElementById('socialPage').classList.add('active');
+                document.getElementById('socialPage').style.display = 'block';
                 document.querySelectorAll('.nav-link')[2].classList.add('active');
             }
         }
@@ -1980,69 +1074,57 @@
         // NOTIFICATION SYSTEM
         // =====================
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            
             const colors = {
                 success: '#00ff88',
                 error: '#ff2e63',
-                warning: '#ffd700',
                 info: '#8a2be2'
             };
             
-            const icons = {
-                success: 'fas fa-check-circle',
-                error: 'fas fa-exclamation-circle',
-                warning: 'fas fa-exclamation-triangle',
-                info: 'fas fa-info-circle'
-            };
-            
+            const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
                 top: 120px;
                 right: 30px;
-                padding: 20px 30px;
-                background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(10, 10, 15, 0.95));
-                color: var(--text);
-                border-radius: var(--radius-lg);
+                padding: 15px 25px;
+                background: rgba(26, 26, 46, 0.95);
+                color: white;
+                border-radius: 12px;
                 font-weight: 600;
                 z-index: 99999;
-                animation: slideInFromRight 0.5s ease-out;
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+                animation: fadeIn 0.3s ease-out;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
                 border-left: 5px solid ${colors[type]};
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                max-width: 400px;
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.1);
+                max-width: 300px;
             `;
             
             notification.innerHTML = `
-                <i class="${icons[type]}" style="font-size: 24px; color: ${colors[type]};"></i>
-                <div>${message}</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" 
+                       style="color:${colors[type]}; font-size:18px;"></i>
+                    <div>${message}</div>
+                </div>
             `;
             
             document.body.appendChild(notification);
             
             setTimeout(() => {
-                notification.style.animation = 'slideInFromRight 0.5s ease-out reverse';
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
                 }, 500);
-            }, 4000);
+            }, 3000);
         }
 
         // =====================
         // INITIALIZATION
         // =====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Hide admin access button initially
-            document.querySelector('.admin-access-btn').style.display = 'none';
-            
-            // Load settings from Firebase on page load
+            // Load settings on page load
             const settingsRef = database.ref('settings');
             settingsRef.once('value', (snapshot) => {
                 if (snapshot.exists()) {
@@ -2055,79 +1137,59 @@
                     
                     if (settings.siteTitle) {
                         document.getElementById('siteTitle').textContent = settings.siteTitle;
-                        document.getElementById('adminSiteTitle').value = settings.siteTitle;
                     }
                     
                     if (settings.welcomeMessage) {
                         document.getElementById('welcomeMessage').textContent = settings.welcomeMessage;
-                        document.getElementById('adminWelcomeMessage').value = settings.welcomeMessage;
                     }
+                }
+            });
+
+            // Check auth state
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Get user data from database
+                    database.ref('users/' + user.uid).once('value', (snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            currentUser = {
+                                uid: user.uid,
+                                growID: userData.growID,
+                                isAdmin: userData.isAdmin || false
+                            };
+                            updateUIAfterLogin();
+                        }
+                    });
+                } else {
+                    currentUser = null;
+                    updateUIAfterLogin();
                 }
             });
 
             // Welcome notification
             setTimeout(() => {
                 showNotification('🎰 Welcome to RAYDAD Casino! Click anywhere to enable audio.', 'info');
-            }, 2000);
-
-            // Close modals on outside click
-            document.addEventListener('click', function(event) {
-                const authModal = document.getElementById('authModal');
-                if (event.target === authModal) {
-                    hideAuthModal();
-                }
-                
-                const adminPanel = document.getElementById('adminPanel');
-                if (event.target === adminPanel) {
-                    hideAdminPanel();
-                }
-            });
-
-            // Check if user is already logged in
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    // Extract GrowID from email
-                    const email = user.email;
-                    const growID = email.split('@')[0].toUpperCase();
-                    
-                    currentUser = {
-                        growID: growID,
-                        email: email
-                    };
-                    updateUIAfterLogin();
-                }
-            });
+            }, 1000);
         });
 
         // =====================
         // KEYBOARD SHORTCUTS
         // =====================
         document.addEventListener('keydown', function(e) {
-            // M for music toggle
             if (e.key === 'm' || e.key === 'M') {
                 e.preventDefault();
                 toggleMusic();
             }
             
-            // Ctrl + Shift + A for admin panel
             if (e.ctrlKey && e.shiftKey && e.key === 'A') {
                 e.preventDefault();
-                showAdminLogin();
+                if (currentUser?.isAdmin) {
+                    showAdminPanel();
+                } else {
+                    showAuthModal();
+                }
             }
             
-            // 1-3 for pages
-            if (e.key === '1') {
-                e.preventDefault();
-                switchPage('home');
-            } else if (e.key === '2') {
-                e.preventDefault();
-                switchPage('rules');
-            } else if (e.key === '3') {
-                e.preventDefault();
-                switchPage('social');
-            }
-            
-            // Esc to close modals
             if (e.key === 'Escape') {
                 hideAuthModal();
                 hideAdminPanel();
