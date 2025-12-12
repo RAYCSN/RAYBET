@@ -1020,17 +1020,17 @@
     <!-- Music Player -->
     <div class="music-player" id="musicPlayer">
         <button class="music-btn" id="musicToggle">
-            <i class="fas fa-play"></i>
+            <i class="fas fa-pause"></i>
         </button>
-        <div class="music-info" id="musicInfo">CLICK TO ENABLE</div>
+        <div class="music-info" id="musicInfo">CASINO AMBIENCE</div>
         <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
     </div>
 
     <!-- Audio Element -->
-    <audio id="backgroundMusic" loop preload="auto">
+    <audio id="backgroundMusic" loop autoplay>
         <source src="music.mp3" type="audio/mpeg">
-        <!-- Fallback audio sources -->
-        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
+        <!-- Fallback music if music.mp3 doesn't exist -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Authentication Modal -->
@@ -1424,53 +1424,54 @@
         const database = firebase.database();
 
         // =====================
-        // FIXED MUSIC PLAYER - GUARANTEED WORKING
+        // AUTO-PLAY MUSIC - STARTS IMMEDIATELY
         // =====================
         const backgroundMusic = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
         const musicInfo = document.getElementById('musicInfo');
         const volumeSlider = document.getElementById('volumeSlider');
         
-        let isMusicPlaying = false;
-        let userInteracted = false;
+        let isMusicPlaying = true; // Start as playing
 
         // Set initial volume
         backgroundMusic.volume = volumeSlider.value / 100;
 
-        // Function to handle first user interaction
-        function handleFirstInteraction() {
-            if (!userInteracted) {
-                userInteracted = true;
-                console.log("User interacted, audio can now play");
-                
-                // Try to play audio
-                backgroundMusic.play().then(() => {
-                    console.log("Audio started successfully");
+        // Function to start music automatically
+        function startMusicAuto() {
+            console.log("Starting music automatically...");
+            
+            // Set audio to autoplay
+            backgroundMusic.autoplay = true;
+            backgroundMusic.loop = true;
+            
+            // Try to play immediately
+            const playPromise = backgroundMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("✅ Music auto-play successful!");
                     isMusicPlaying = true;
                     musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
                     musicInfo.textContent = 'CASINO AMBIENCE';
                     musicInfo.style.color = '#00ff88';
                     
-                    // Pause it if we just wanted to unlock audio
-                    backgroundMusic.pause();
+                    // Store that user has interacted with audio
+                    localStorage.setItem('audioAllowed', 'true');
+                }).catch(error => {
+                    console.log("Auto-play failed, waiting for user interaction:", error);
+                    musicInfo.textContent = 'CLICK ANYWHERE';
+                    musicInfo.style.color = '#ff2e63';
                     isMusicPlaying = false;
                     musicToggle.innerHTML = '<i class="fas fa-play"></i>';
-                    musicInfo.textContent = 'READY TO PLAY';
-                }).catch(error => {
-                    console.log("Audio play failed:", error);
-                    musicInfo.textContent = 'CLICK TO ENABLE';
-                    musicInfo.style.color = '#ff2e63';
+                    
+                    // Show notification
+                    showNotification("🔊 Click anywhere to enable casino music!", "info");
                 });
             }
         }
 
         // Toggle music function
         function toggleMusic() {
-            if (!userInteracted) {
-                handleFirstInteraction();
-                return;
-            }
-            
             if (isMusicPlaying) {
                 backgroundMusic.pause();
                 musicToggle.innerHTML = '<i class="fas fa-play"></i>';
@@ -1484,8 +1485,8 @@
                     musicInfo.style.color = '#00ff88';
                     isMusicPlaying = true;
                 }).catch(error => {
-                    console.log("Failed to play:", error);
-                    musicInfo.textContent = 'CLICK AGAIN';
+                    console.log("Play failed:", error);
+                    musicInfo.textContent = 'CLICK PAGE FIRST';
                     musicInfo.style.color = '#ff2e63';
                 });
             }
@@ -1499,10 +1500,19 @@
         musicToggle.addEventListener('click', toggleMusic);
         volumeSlider.addEventListener('input', changeVolume);
 
-        // Listen for any user interaction to unlock audio
-        document.addEventListener('click', handleFirstInteraction);
-        document.addEventListener('keydown', handleFirstInteraction);
-        document.addEventListener('touchstart', handleFirstInteraction);
+        // Listen for ANY user interaction to enable audio
+        document.addEventListener('click', function() {
+            if (!isMusicPlaying) {
+                startMusicAuto();
+            }
+        });
+
+        // Also enable on key press
+        document.addEventListener('keydown', function() {
+            if (!isMusicPlaying) {
+                startMusicAuto();
+            }
+        });
 
         // =====================
         // FIXED PAGE NAVIGATION - WORKING VERSION
@@ -1724,13 +1734,19 @@
             document.getElementById('loginBtn').style.display = 'flex';
             document.getElementById('adminAccessBtn').style.display = 'none';
             
-            // Set music info
-            musicInfo.textContent = 'CLICK TO ENABLE';
-            musicInfo.style.color = '#ff2e63';
+            // Set music player to show playing state
+            musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
+            musicInfo.textContent = 'CASINO AMBIENCE';
+            musicInfo.style.color = '#00ff88';
+            
+            // Start music automatically
+            setTimeout(() => {
+                startMusicAuto();
+            }, 500);
             
             // Welcome notification
             setTimeout(() => {
-                showNotification('🎰 Welcome to RAYDAD Casino! Click anywhere to enable audio.', 'info');
+                showNotification('🎰 Welcome to RAYDAD Casino! Music is auto-playing.', 'info');
             }, 1000);
             
             // Make sure home page is active
