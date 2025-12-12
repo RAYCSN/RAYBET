@@ -51,6 +51,7 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -60,7 +61,7 @@
             text-transform: uppercase;
         }
 
-        /* ===== GLITCH BACKGROUND - FIXED ===== */
+        /* ===== FIXED GLITCH BACKGROUND - NOW VISIBLE ===== */
         .glitch-bg {
             position: fixed;
             top: 0;
@@ -82,7 +83,7 @@
                 linear-gradient(45deg, transparent 75%, #000000 75%) 0 0,
                 linear-gradient(-45deg, transparent 75%, #000000 75%) 0 0;
             background-size: 20px 20px;
-            opacity: 0.05;
+            opacity: 0.08;
             animation: glitchMove 20s infinite linear;
         }
 
@@ -93,10 +94,11 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 46, 99, 0.03) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 46, 99, 0.05) 0%, transparent 50%);
             animation: glitchDistort 3s infinite alternate;
+            mix-blend-mode: overlay;
         }
 
         @keyframes glitchMove {
@@ -437,7 +439,7 @@
             font-size: 14px;
         }
 
-        /* ===== MUSIC PLAYER ===== */
+        /* ===== FIXED MUSIC PLAYER ===== */
         .music-player {
             position: fixed;
             bottom: 30px;
@@ -817,14 +819,18 @@
             opacity: 1;
         }
 
-        /* ===== PAGES ===== */
+        /* ===== FIXED PAGE SYSTEM ===== */
         .page {
             display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
         .page.active {
             display: block;
-            animation: fadeIn 0.5s ease;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* ===== RULES PAGE STYLES ===== */
@@ -1005,7 +1011,7 @@
     </style>
 </head>
 <body>
-    <!-- Glitch Background -->
+    <!-- Fixed Glitch Background -->
     <div class="glitch-bg">
         <div class="glitch-grid"></div>
         <div class="glitch-glow"></div>
@@ -1255,7 +1261,7 @@
             </div>
         </div>
         
-        <!-- Rules Page - FIXED CONTENT -->
+        <!-- Rules Page -->
         <div class="page" id="rulesPage">
             <div class="world-hero">
                 <h1 class="world-hero-title">CASINO RULES</h1>
@@ -1309,7 +1315,7 @@
             </div>
         </div>
         
-        <!-- Social Page - FIXED CONTENT -->
+        <!-- Social Page -->
         <div class="page" id="socialPage">
             <div class="world-hero">
                 <h1 class="world-hero-title">JOIN OUR COMMUNITY</h1>
@@ -1392,31 +1398,17 @@
 
     <script>
         // =====================
-        // FIREBASE CONFIGURATION
+        // FIREBASE CONFIGURATION - SIMPLIFIED
         // =====================
-        // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA6c82EcBedDn78KUmHUCUhMwt5w7lpKjQ",
-  authDomain: "raybet-82ea0.firebaseapp.com",
-  databaseURL: "https://raybet-82ea0-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "raybet-82ea0",
-  storageBucket: "raybet-82ea0.firebasestorage.app",
-  messagingSenderId: "851971186704",
-  appId: "1:851971186704:web:e20e3581ee97a3a7aeaa95",
-  measurementId: "G-187DZPGSC3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6c82EcBedDn78KUmHUCUhMwt5w7lpKjQ",
+            authDomain: "raybet-82ea0.firebaseapp.com",
+            databaseURL: "https://raybet-82ea0-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "raybet-82ea0",
+            storageBucket: "raybet-82ea0.firebasestorage.app",
+            messagingSenderId: "851971186704",
+            appId: "1:851971186704:web:e20e3581ee97a3a7aeaa95"
+        };
 
         // Initialize Firebase
         try {
@@ -1430,7 +1422,7 @@ const analytics = getAnalytics(app);
         const database = firebase.database();
 
         // =====================
-        // FIXED MUSIC PLAYER
+        // SIMPLE MUSIC PLAYER - GUARANTEED WORKING
         // =====================
         const backgroundMusic = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
@@ -1438,25 +1430,25 @@ const analytics = getAnalytics(app);
         const volumeSlider = document.getElementById('volumeSlider');
         
         let isMusicPlaying = false;
-        let audioEnabled = false;
+        let audioInitialized = false;
 
         backgroundMusic.volume = volumeSlider.value / 100;
 
-        // FIXED: Simple audio unlock
-        function enableAudio() {
-            if (audioEnabled) return;
+        // Simple audio initialization
+        function initAudio() {
+            if (audioInitialized) return;
             
-            // Create and play silent audio
+            // Play silent audio to unlock
             const silentAudio = new Audio();
             silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
             silentAudio.volume = 0.001;
             
             silentAudio.play().then(() => {
                 silentAudio.pause();
-                audioEnabled = true;
+                audioInitialized = true;
                 musicInfo.textContent = "READY TO PLAY";
                 musicInfo.style.color = "#00ff88";
-                showNotification('🔊 Audio enabled! Click play button', 'success');
+                console.log("Audio initialized");
             }).catch(() => {
                 musicInfo.textContent = "CLICK PAGE FIRST";
                 musicInfo.style.color = "#ff2e63";
@@ -1464,8 +1456,8 @@ const analytics = getAnalytics(app);
         }
 
         function toggleMusic() {
-            if (!audioEnabled) {
-                enableAudio();
+            if (!audioInitialized) {
+                initAudio();
                 return;
             }
             
@@ -1482,7 +1474,7 @@ const analytics = getAnalytics(app);
                     musicInfo.style.color = '#00ff88';
                     isMusicPlaying = true;
                 }).catch(() => {
-                    showNotification('❌ Click anywhere on page first', 'error');
+                    showNotification('❌ Click page first', 'error');
                 });
             }
         }
@@ -1491,356 +1483,16 @@ const analytics = getAnalytics(app);
             backgroundMusic.volume = volumeSlider.value / 100;
         }
 
-        // Enable audio on page click
+        // Initialize on first click
         document.addEventListener('click', function() {
-            if (!audioEnabled) enableAudio();
+            if (!audioInitialized) initAudio();
         });
 
         musicToggle.addEventListener('click', toggleMusic);
         volumeSlider.addEventListener('input', changeVolume);
 
-        // Auto-enable after 3 seconds
-        setTimeout(() => {
-            if (!audioEnabled) enableAudio();
-        }, 3000);
-
         // =====================
-        // FIXED AUTHENTICATION SYSTEM
-        // =====================
-        let currentUser = null;
-        let adminPassword = "raydad_admin_2024";
-
-        function showAuthModal() {
-            document.getElementById('authModal').classList.add('active');
-        }
-
-        function hideAuthModal() {
-            document.getElementById('authModal').classList.remove('active');
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('registerError').style.display = 'none';
-        }
-
-        function switchAuthTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            
-            if (tab === 'login') {
-                document.querySelectorAll('.auth-tab')[0].classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                document.querySelectorAll('.auth-tab')[1].classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
-
-        // Check if GrowID exists - FIXED
-        async function checkGrowIDExists(growID) {
-            try {
-                const usersRef = database.ref('users');
-                const snapshot = await usersRef.once('value');
-                const users = snapshot.val();
-                
-                if (!users) return false;
-                
-                // Check all users for matching growID
-                for (const uid in users) {
-                    if (users[uid].growID && users[uid].growID.toLowerCase() === growID.toLowerCase()) {
-                        return true;
-                    }
-                }
-                return false;
-            } catch (error) {
-                console.error("Error checking GrowID:", error);
-                return false;
-            }
-        }
-
-        // FIXED: Register User
-        async function registerUser() {
-            const growID = document.getElementById('registerGrowID').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const errorElement = document.getElementById('registerError');
-
-            if (!growID || !password) {
-                showError(errorElement, "Please fill in all fields");
-                return;
-            }
-
-            if (password.length < 6) {
-                showError(errorElement, "Password must be at least 6 characters");
-                return;
-            }
-
-            // Check duplicate GrowID
-            const exists = await checkGrowIDExists(growID);
-            if (exists) {
-                showError(errorElement, "This GrowID is already registered");
-                return;
-            }
-
-            try {
-                // Create user with email
-                const email = `${growID.toLowerCase()}@raydadcasino.com`;
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                // Save user data
-                await database.ref('users/' + user.uid).set({
-                    uid: user.uid,
-                    growID: growID,
-                    email: email,
-                    isAdmin: false,
-                    createdAt: Date.now(),
-                    lastLogin: Date.now()
-                });
-
-                currentUser = {
-                    uid: user.uid,
-                    growID: growID,
-                    isAdmin: false
-                };
-
-                updateUIAfterLogin();
-                hideAuthModal();
-                showNotification('🎉 Account created successfully!', 'success');
-
-            } catch (error) {
-                console.error("Registration error:", error);
-                showError(errorElement, error.message.includes("email-already-in-use") ? "GrowID already exists" : error.message);
-            }
-        }
-
-        // FIXED: Login User - ADMIN LOGIN NOW WORKS
-        async function loginUser() {
-            const growID = document.getElementById('loginGrowID').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorElement = document.getElementById('loginError');
-
-            if (!growID || !password) {
-                showError(errorElement, "Please fill in all fields");
-                return;
-            }
-
-            try {
-                // FIXED: ADMIN LOGIN - NOW WORKS!
-                if (growID.toLowerCase() === 'admin') {
-                    // Get admin password from Firebase
-                    const adminRef = database.ref('admin/password');
-                    const snapshot = await adminRef.once('value');
-                    const storedPassword = snapshot.val() || adminPassword;
-                    
-                    if (password === storedPassword) {
-                        currentUser = {
-                            uid: 'admin-' + Date.now(),
-                            growID: 'ADMIN',
-                            isAdmin: true
-                        };
-                        
-                        updateUIAfterLogin();
-                        hideAuthModal();
-                        showNotification('🔐 Admin login successful!', 'success');
-                        return;
-                    } else {
-                        showError(errorElement, "Invalid admin password");
-                        return;
-                    }
-                }
-
-                // Regular user login - FIXED
-                const email = `${growID.toLowerCase()}@raydadcasino.com`;
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                // Get user data
-                const userSnapshot = await database.ref('users/' + user.uid).once('value');
-                const userData = userSnapshot.val();
-                
-                if (!userData) {
-                    showError(errorElement, "User data not found");
-                    return;
-                }
-
-                // Update last login
-                await database.ref('users/' + user.uid).update({
-                    lastLogin: Date.now()
-                });
-
-                currentUser = {
-                    uid: user.uid,
-                    growID: userData.growID,
-                    isAdmin: userData.isAdmin || false
-                };
-
-                updateUIAfterLogin();
-                hideAuthModal();
-                showNotification('👋 Welcome back, ' + currentUser.growID + '!', 'success');
-
-            } catch (error) {
-                console.error("Login error:", error);
-                showError(errorElement, "Invalid GrowID or password");
-            }
-        }
-
-        function showError(element, message) {
-            element.textContent = message;
-            element.style.display = 'block';
-        }
-
-        function logout() {
-            auth.signOut();
-            currentUser = null;
-            updateUIAfterLogin();
-            showNotification('👋 Logged out successfully', 'info');
-        }
-
-        function updateUIAfterLogin() {
-            const userInfo = document.getElementById('userInfo');
-            const loginBtn = document.getElementById('loginBtn');
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-            const adminAccessBtn = document.getElementById('adminAccessBtn');
-
-            if (currentUser) {
-                userInfo.style.display = 'flex';
-                loginBtn.style.display = 'none';
-                
-                const initial = currentUser.growID.charAt(0).toUpperCase();
-                userAvatar.textContent = initial;
-                userName.textContent = currentUser.growID;
-
-                // Show admin button only for admin
-                if (currentUser.isAdmin) {
-                    adminAccessBtn.style.display = 'flex';
-                    showNotification('🛡️ Admin panel unlocked! Click shield icon', 'info');
-                } else {
-                    adminAccessBtn.style.display = 'none';
-                }
-
-            } else {
-                userInfo.style.display = 'none';
-                loginBtn.style.display = 'flex';
-                adminAccessBtn.style.display = 'none';
-            }
-        }
-
-        // =====================
-        // FIXED ADMIN PANEL FUNCTIONS
-        // =====================
-        function showAdminPanel() {
-            if (!currentUser?.isAdmin) {
-                showNotification('🔐 Admin access required', 'error');
-                return;
-            }
-            document.getElementById('adminPanel').classList.add('active');
-            loadAdminData();
-        }
-
-        function hideAdminPanel() {
-            document.getElementById('adminPanel').classList.remove('active');
-        }
-
-        async function loadAdminData() {
-            try {
-                // Load world name
-                const worldNameRef = database.ref('settings/worldName');
-                worldNameRef.on('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const name = snapshot.val();
-                        document.getElementById('adminWorldName').value = name;
-                        document.getElementById('worldUrl').textContent = name;
-                    }
-                });
-
-                // Load admin password
-                const adminPasswordRef = database.ref('admin/password');
-                adminPasswordRef.on('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const password = snapshot.val();
-                        document.getElementById('currentAdminPassword').value = password;
-                        adminPassword = password;
-                    }
-                });
-
-                // Load users
-                loadAllUsers();
-
-                // Load statistics
-                const usersRef = database.ref('users');
-                usersRef.once('value', (snapshot) => {
-                    document.getElementById('totalUsers').textContent = snapshot.numChildren();
-                });
-
-            } catch (error) {
-                console.error("Error loading admin data:", error);
-            }
-        }
-
-        async function updateWorldName() {
-            const newWorldName = document.getElementById('adminWorldName').value.trim();
-            if (!newWorldName) return;
-
-            try {
-                await database.ref('settings/worldName').set(newWorldName);
-                document.getElementById('worldUrl').textContent = newWorldName;
-                showNotification('🌍 World name updated!', 'success');
-            } catch (error) {
-                showNotification('❌ Error updating world name', 'error');
-            }
-        }
-
-        async function updateAdminPassword() {
-            const newPassword = document.getElementById('newAdminPassword').value.trim();
-            if (!newPassword || newPassword.length < 6) {
-                showNotification('❌ Password must be at least 6 characters', 'error');
-                return;
-            }
-
-            try {
-                await database.ref('admin/password').set(newPassword);
-                document.getElementById('currentAdminPassword').value = newPassword;
-                adminPassword = newPassword;
-                document.getElementById('newAdminPassword').value = '';
-                showNotification('🔑 Admin password updated!', 'success');
-            } catch (error) {
-                showNotification('❌ Error updating password', 'error');
-            }
-        }
-
-        async function loadAllUsers() {
-            try {
-                const usersRef = database.ref('users');
-                const snapshot = await usersRef.once('value');
-                const users = snapshot.val();
-                
-                let usersHtml = '<table style="width:100%; border-collapse:collapse; margin-top:10px;">';
-                usersHtml += '<tr style="background:#1a1a2e;"><th>GrowID</th><th>Admin</th><th>Created</th></tr>';
-                
-                if (users) {
-                    Object.keys(users).forEach(uid => {
-                        const user = users[uid];
-                        const date = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
-                        usersHtml += `
-                            <tr style="border-bottom:1px solid #1a1a2e;">
-                                <td style="padding:8px;">${user.growID || 'N/A'}</td>
-                                <td style="padding:8px;">${user.isAdmin ? '✅' : '❌'}</td>
-                                <td style="padding:8px;">${date}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    usersHtml += '<tr><td colspan="3">No users found</td></tr>';
-                }
-                
-                usersHtml += '</table>';
-                document.getElementById('usersList').innerHTML = usersHtml;
-                
-            } catch (error) {
-                document.getElementById('usersList').innerHTML = '<p>Error loading users</p>';
-            }
-        }
-
-        // =====================
-        // PAGE NAVIGATION - FIXED
+        // FIXED PAGE NAVIGATION - NOW WORKING
         // =====================
         function switchPage(pageId) {
             // Hide all pages
@@ -1864,6 +1516,132 @@ const analytics = getAnalytics(app);
                 document.getElementById('socialPage').classList.add('active');
                 document.querySelectorAll('.nav-link')[2].classList.add('active');
             }
+            
+            console.log("Switched to page:", pageId);
+        }
+
+        // =====================
+        // SIMPLE AUTH SYSTEM (For Testing)
+        // =====================
+        let currentUser = null;
+
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        function hideAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // Simple test login (bypass Firebase for now)
+        function loginUser() {
+            const growID = document.getElementById('loginGrowID').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!growID || !password) {
+                showNotification('Please enter GrowID and password', 'error');
+                return;
+            }
+            
+            // Simple test login
+            if (growID.toLowerCase() === 'admin' && password === 'raydad_admin_2024') {
+                currentUser = { growID: 'ADMIN', isAdmin: true };
+                showNotification('🔐 Admin login successful!', 'success');
+                hideAuthModal();
+                updateUIAfterLogin();
+            } else {
+                showNotification('Invalid credentials', 'error');
+            }
+        }
+
+        function registerUser() {
+            const growID = document.getElementById('registerGrowID').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!growID || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            currentUser = { growID: growID, isAdmin: false };
+            showNotification('🎉 Account created successfully!', 'success');
+            hideAuthModal();
+            updateUIAfterLogin();
+        }
+
+        function logout() {
+            currentUser = null;
+            updateUIAfterLogin();
+            showNotification('👋 Logged out successfully', 'info');
+        }
+
+        function updateUIAfterLogin() {
+            const userInfo = document.getElementById('userInfo');
+            const loginBtn = document.getElementById('loginBtn');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const adminAccessBtn = document.getElementById('adminAccessBtn');
+
+            if (currentUser) {
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+                
+                const initial = currentUser.growID.charAt(0).toUpperCase();
+                userAvatar.textContent = initial;
+                userName.textContent = currentUser.growID;
+
+                if (currentUser.isAdmin) {
+                    adminAccessBtn.style.display = 'flex';
+                } else {
+                    adminAccessBtn.style.display = 'none';
+                }
+
+            } else {
+                userInfo.style.display = 'none';
+                loginBtn.style.display = 'flex';
+                adminAccessBtn.style.display = 'none';
+            }
+        }
+
+        // =====================
+        // ADMIN PANEL FUNCTIONS
+        // =====================
+        function showAdminPanel() {
+            if (!currentUser?.isAdmin) {
+                showNotification('🔐 Admin access required', 'error');
+                return;
+            }
+            document.getElementById('adminPanel').classList.add('active');
+        }
+
+        function hideAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('active');
+        }
+
+        function updateWorldName() {
+            const newWorldName = document.getElementById('adminWorldName').value.trim();
+            if (!newWorldName) return;
+            
+            document.getElementById('worldUrl').textContent = newWorldName;
+            showNotification('🌍 World name updated!', 'success');
         }
 
         // =====================
@@ -1917,58 +1695,20 @@ const analytics = getAnalytics(app);
         // INITIALIZATION
         // =====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize userInfo as hidden
+            // Set initial UI state
             document.getElementById('userInfo').style.display = 'none';
             document.getElementById('loginBtn').style.display = 'flex';
             document.getElementById('adminAccessBtn').style.display = 'none';
-
-            // Load settings
-            const settingsRef = database.ref('settings');
-            settingsRef.once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    const settings = snapshot.val();
-                    
-                    if (settings.worldName) {
-                        document.getElementById('worldUrl').textContent = settings.worldName;
-                        document.getElementById('adminWorldName').value = settings.worldName;
-                    }
-                    
-                    if (settings.siteTitle) {
-                        document.getElementById('siteTitle').textContent = settings.siteTitle;
-                    }
-                    
-                    if (settings.welcomeMessage) {
-                        document.getElementById('welcomeMessage').textContent = settings.welcomeMessage;
-                    }
-                }
-            });
-
-            // Check auth state
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    // User is signed in
-                    database.ref('users/' + user.uid).once('value', (snapshot) => {
-                        const userData = snapshot.val();
-                        if (userData) {
-                            currentUser = {
-                                uid: user.uid,
-                                growID: userData.growID,
-                                isAdmin: userData.isAdmin || false
-                            };
-                            updateUIAfterLogin();
-                        }
-                    });
-                } else {
-                    // User is signed out
-                    currentUser = null;
-                    updateUIAfterLogin();
-                }
-            });
-
+            
+            // Initialize audio after 2 seconds
+            setTimeout(initAudio, 2000);
+            
             // Welcome notification
             setTimeout(() => {
                 showNotification('🎰 Welcome to RAYDAD Casino! Click anywhere to enable audio.', 'info');
             }, 1000);
+            
+            console.log("Website initialized");
         });
 
         // Keyboard shortcuts
@@ -1978,26 +1718,15 @@ const analytics = getAnalytics(app);
                 toggleMusic();
             }
             
-            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-                e.preventDefault();
-                if (currentUser?.isAdmin) {
-                    showAdminPanel();
-                } else {
-                    showNotification('Admin access required', 'error');
-                }
-            }
+            if (e.key === '1') switchPage('home');
+            if (e.key === '2') switchPage('rules');
+            if (e.key === '3') switchPage('social');
             
             if (e.key === 'Escape') {
                 hideAuthModal();
                 hideAdminPanel();
             }
-            
-            // Page shortcuts
-            if (e.key === '1') switchPage('home');
-            if (e.key === '2') switchPage('rules');
-            if (e.key === '3') switchPage('social');
         });
     </script>
 </body>
 </html>
-
